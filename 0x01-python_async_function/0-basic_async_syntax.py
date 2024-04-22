@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''a module'''
+'''a module ith asyn await'''
 import asyncio
 import random
 from typing import Union
