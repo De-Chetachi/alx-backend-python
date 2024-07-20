@@ -8,6 +8,7 @@ from utils import get_json, memoize
 import requests
 from unittest.mock import patch, Mock
 
+
 class TestAccessNestedMap(unittest.TestCase):
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
@@ -19,7 +20,6 @@ class TestAccessNestedMap(unittest.TestCase):
         produces desired output for given key'''
         self.assertEqual(an_map(n_map, key), expected)
 
-
     @parameterized.expand([
         ({}, ("a",)),
         ({"a": 1}, ("a", "b")),
@@ -28,7 +28,6 @@ class TestAccessNestedMap(unittest.TestCase):
         '''test that an_map raises keyerror for non existent keys'''
         with self.assertRaises(KeyError, msg=key):
             an_map(n_map, key)
-
 
 
 class TestGetJson(unittest.TestCase):
@@ -48,8 +47,7 @@ class TestGetJson(unittest.TestCase):
         mock_get.assert_called_once_with(test_url)
 
 
-
-class  TestMemoize(unittest.TestCase):
+class TestMemoize(unittest.TestCase):
     '''test memoize class'''
     def test_memoize(self):
         '''test memoize'''
@@ -61,12 +59,12 @@ class  TestMemoize(unittest.TestCase):
             def a_property(self):
                 return self.a_method()
 
-
         with patch.object(TestClass, "a_method", return_value=42) as a_meth:
             test_obj = TestClass()
             self.assertEqual(test_obj.a_property, 42)
             self.assertEqual(test_obj.a_property, 42)
         a_meth.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()
