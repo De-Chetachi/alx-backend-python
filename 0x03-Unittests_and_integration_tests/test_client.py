@@ -61,24 +61,55 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(client_2.has_license(repo, license_keys), expected)
 
 
-"""
 @parameterized_class(
-        ("org_payload", "repos_payload", "expected_repos", "apache2_repos"), [
-
-    ])
+        ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+        TEST_PAYLOAD
+        )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     '''integration test for public_repos'''
 
     @classmethod
     def setUpClass(cls):
         '''set up done before running tests'''
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
 
+        def side_effect(url):
+            '''side effect to ensure that mock get
+            returns expected result'''
+            class Mock_:
+                '''mock json'''
+                def __init__(self, json):
+                    self.data = json
 
+                def json(self):
+                    '''return data'''
+                    return self.data
+
+            if url.endswith('/orgs/google'):
+                return Mock_(cls.org_payload)
+            elif url.endswith('/orgs/google/repos'):
+                return Mock_(cls.repos_payload)
+            else:
+                return None
+
+        cls.mock_get.side_effect = side_effect
 
     @classmethod
     def tearDownClass(cls):
-      '''called after test in a test class a run'''
-"""
+        '''called after test in a test class a run'''
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        '''test GithubOrgClient.public_repos.'''
+        github_org_client = client.GithubOrgClient("google")
+        self.assertEqual(github_org_client.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """doc doc doc"""
+        github_org_client = client.GithubOrgClient("google")
+        self.assertEqual(github_org_client.public_repos(license="apache-2.0"),
+                         self.apache2_repos)
 
 
 if __name__ == "__main__":
